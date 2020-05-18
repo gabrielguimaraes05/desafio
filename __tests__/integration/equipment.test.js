@@ -2,7 +2,7 @@
 import request from 'supertest';
 import app from '../../src/app';
 
-describe('Equipment', () => {
+describe('EquipmentPOST', () => {
   it('it is possible to register equipment', async () => {
     const response = await request(app).post('/equipments').send({
       model: 'WHSJ-80',
@@ -46,16 +46,32 @@ describe('EquipmentPUT', () => {
     });
     expect(response.statusCode).toEqual(400);
   });
+  it('cannot update equipment already exists', async () => {
+    const response = await request(app).put('/equipments/1').send({
+      model: 'WHSJ-80',
+    });
+    expect(response.statusCode).toEqual(400);
+  });
+  it('update equipment', async () => {
+    const response = await request(app).put('/equipments/1').send({
+      model: 'WHSJ-90',
+    });
+    expect(response.body).toHaveProperty('model');
+  });
+});
+describe('EquipmentGET', () => {
+  it('get equipment', async () => {
+    const response = await request(app).get('/equipments').send({});
+    expect(response.statusCode).toEqual(200);
+  });
 });
 describe('EquipmentDELETE', () => {
   it('equipment does not exist to be delete', async () => {
     const response = await request(app).delete('/equipments/1000').send({});
     expect(response.statusCode).toEqual(400);
   });
-});
-describe('EquipmentDELETE', () => {
-  it('get equipment', async () => {
-    const response = await request(app).get('/equipments').send({});
+  it('delete equipment', async () => {
+    const response = await request(app).delete('/equipments/1').send({});
     expect(response.statusCode).toEqual(200);
   });
 });
